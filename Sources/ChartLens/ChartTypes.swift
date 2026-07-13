@@ -7,10 +7,15 @@ public protocol ChartPointProtocol: Sendable {
     var yRange: (min: Double, max: Double) { get }
     /// The Y value used for hit-test screen positioning. Defaults to yRange.min.
     var displayY: Double { get }
+    /// Optional text drawn on the x-axis at this point's x (categorical axis).
+    /// Defaults to `nil`; when set and `axis.xTicks` is empty, the chart draws
+    /// an evenly-spaced tick with this label under the point.
+    var xLabel: String? { get }
 }
 
 extension ChartPointProtocol {
     public var displayY: Double { yRange.min }
+    public var xLabel: String? { nil }
 }
 
 public protocol ChartSeriesRenderer<Point>: Sendable {
@@ -32,12 +37,19 @@ public protocol ChartSeriesProtocol<Point>: Sendable {
 public struct ChartPoint: ChartPointProtocol {
     public var x: Double
     public var y: Double
+    /// Optional per-point color. When set, bar/dot renderers use it instead of
+    /// `style.color`. Defaults to `nil` (fall back to the series color).
+    public var color: Color?
+    /// Optional categorical x-axis label drawn under the bar.
+    public var xLabel: String?
 
     public var yRange: (min: Double, max: Double) { (y, y) }
 
-    public init(x: Double, y: Double) {
+    public init(x: Double, y: Double, color: Color? = nil, xLabel: String? = nil) {
         self.x = x
         self.y = y
+        self.color = color
+        self.xLabel = xLabel
     }
 }
 
@@ -59,6 +71,88 @@ public struct CandlestickPoint: ChartPointProtocol {
         self.high = high
         self.low = low
         self.close = close
+    }
+}
+
+// MARK: - Range Point (Error Bar)
+
+/// A data point with a center value and a [low, high] interval, for error bars.
+public struct RangePoint: ChartPointProtocol {
+    public let x: Double
+    public let center: Double
+    public let low: Double
+    public let high: Double
+    /// Optional categorical x-axis label drawn under the error bar.
+    public let xLabel: String?
+
+    public var yRange: (min: Double, max: Double) { (low, high) }
+    public var displayY: Double { center }
+
+    public init(x: Double, center: Double, low: Double, high: Double, xLabel: String? = nil) {
+        self.x = x
+        self.center = center
+        self.low = low
+        self.high = high
+        self.xLabel = xLabel
+    }
+}
+
+// MARK: - Box Plot Point
+
+/// A data point describing a full box plot: quartiles, whiskers, and outliers.
+public struct BoxPlotPoint: ChartPointProtocol {
+    public let x: Double
+    public let min: Double
+    public let q1: Double
+    public let median: Double
+    public let q3: Double
+    public let max: Double
+    public var outliers: [Double]
+    /// Optional categorical x-axis label drawn under the box plot.
+    public let xLabel: String?
+
+    public var yRange: (min: Double, max: Double) { (min, max) }
+    public var displayY: Double { median }
+
+    public init(
+        x: Double,
+        min: Double,
+        q1: Double,
+        median: Double,
+        q3: Double,
+        max: Double,
+        outliers: [Double] = [],
+        xLabel: String? = nil
+    ) {
+        self.x = x
+        self.min = min
+        self.q1 = q1
+        self.median = median
+        self.q3 = q3
+        self.max = max
+        self.outliers = outliers
+        self.xLabel = xLabel
+    }
+}
+
+// MARK: - Bubble Point
+
+/// A scatter point whose drawn radius encodes a third (size) dimension.
+public struct BubblePoint: ChartPointProtocol {
+    public let x: Double
+    public let y: Double
+    /// Pixel radius of the drawn bubble (zoom-independent, like `pointRadius`).
+    public let radius: CGFloat
+    /// Optional payload surfaced in tooltips / hit-testing.
+    public var value: Double
+
+    public var yRange: (min: Double, max: Double) { (y, y) }
+
+    public init(x: Double, y: Double, radius: CGFloat, value: Double = 0) {
+        self.x = x
+        self.y = y
+        self.radius = radius
+        self.value = value
     }
 }
 
@@ -102,6 +196,10 @@ public struct ChartSeriesStyle: Sendable {
     public static func dots(color: Color, radius: CGFloat = 2) -> ChartSeriesStyle {
         ChartSeriesStyle(color: color, lineWidth: 0, areaOpacity: 0, pointRadius: radius, interpolation: .linear)
     }
+
+    public static func bars(color: Color, opacity: Double = 1.0, lineWidth: CGFloat = 0) -> ChartSeriesStyle {
+        ChartSeriesStyle(color: color, lineWidth: lineWidth, areaOpacity: opacity, interpolation: .linear)
+    }
 }
 
 public enum Interpolation: Equatable, Sendable {
@@ -138,6 +236,47 @@ extension ChartSeries where Point == ChartPoint {
     public init(id: String, points: [ChartPoint], style: ChartSeriesStyle) {
         self.init(id: id, points: points, style: style, renderer: LineRenderer())
     }
+
+    /// Convenience for a single-series vertical bar chart.
+    public static func bars(
+        id: String,
+        points: [ChartPoint],
+        color: Color = .blue,
+        opacity: Double = 1.0,
+        lineWidth: CGFloat = 0
+    ) -> ChartSeries<ChartPoint> {
+        ChartSeries(id: id, points: points, style: .bars(color: color, opacity: opacity, lineWidth: lineWidth), renderer: BarRenderer())
+    }
+}
+
+extension ChartSeries where Point == RangePoint {
+    public static func errorBars(
+        id: String,
+        points: [RangePoint],
+        style: ChartSeriesStyle = .line(color: .primary)
+    ) -> ChartSeries<RangePoint> {
+        ChartSeries(id: id, points: points, style: style, renderer: ErrorBarRenderer())
+    }
+}
+
+extension ChartSeries where Point == BoxPlotPoint {
+    public static func boxPlot(
+        id: String,
+        points: [BoxPlotPoint],
+        style: ChartSeriesStyle = .bars(color: .blue, opacity: 0.15, lineWidth: 1)
+    ) -> ChartSeries<BoxPlotPoint> {
+        ChartSeries(id: id, points: points, style: style, renderer: BoxPlotRenderer())
+    }
+}
+
+extension ChartSeries where Point == BubblePoint {
+    public static func bubbles(
+        id: String,
+        points: [BubblePoint],
+        style: ChartSeriesStyle = .bars(color: .blue, opacity: 0.6)
+    ) -> ChartSeries<BubblePoint> {
+        ChartSeries(id: id, points: points, style: style, renderer: BubbleRenderer())
+    }
 }
 
 extension ChartSeries {
@@ -167,6 +306,10 @@ public struct ChartAxisConfig {
     public var showYAxis: Bool = true
     public var showXAxis: Bool = true
     public var clipToRect: Bool = true
+    /// When true and x bounds are auto-computed, pad each edge by half the
+    /// minimum x-gap so elements drawn centered on an x value (bars, boxes,
+    /// error bars) are not clipped at the plot edges.
+    public var padXByHalfStep: Bool = false
     public var yTickLabelOffset: CGFloat = 14   // pixels left of the axis line
     public var xTickLabelOffset: CGFloat = 10   // pixels below the axis line
     public var gridColor: Color = .gray.opacity(0.15)
@@ -202,7 +345,8 @@ public struct ChartAxisConfig {
         xTickColor: Color = .secondary,
         yTickLabel: @escaping (Double) -> String = { "\(Int($0))" },
         minXTickSpacing: CGFloat = 32,
-        minYTickSpacing: CGFloat = 24
+        minYTickSpacing: CGFloat = 24,
+        padXByHalfStep: Bool = false
     ) {
         self.yAxisPosition = yAxisPosition
         self.yMin = yMin
@@ -227,6 +371,7 @@ public struct ChartAxisConfig {
         self.yTickLabel = yTickLabel
         self.minXTickSpacing = minXTickSpacing
         self.minYTickSpacing = minYTickSpacing
+        self.padXByHalfStep = padXByHalfStep
     }
 
     public struct XTick {

@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		AA0000012FE6A00000000006 /* LineRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000012FE6A00000000001 /* LineRenderer.swift */; };
 		AA0000012FE6A00000000007 /* CandlestickRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000012FE6A00000000002 /* CandlestickRenderer.swift */; };
+		AA0000012FE6A0000000001A /* BarRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000012FE6A00000000019 /* BarRenderer.swift */; };
+		AA0000012FE6A0000000001C /* ErrorBarRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000012FE6A0000000001B /* ErrorBarRenderer.swift */; };
+		AA0000012FE6A0000000001E /* BoxPlotRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000012FE6A0000000001D /* BoxPlotRenderer.swift */; };
+		AA0000012FE6A00000000020 /* BubbleRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000012FE6A0000000001F /* BubbleRenderer.swift */; };
 		AA0000012FE6A00000000008 /* ProtocolsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000012FE6A00000000003 /* ProtocolsTests.swift */; };
 		AA0000012FE6A00000000009 /* LineRendererTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000012FE6A00000000004 /* LineRendererTests.swift */; };
 		AA0000012FE6A0000000000A /* CandlestickRendererTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000012FE6A00000000005 /* CandlestickRendererTests.swift */; };
@@ -19,6 +23,9 @@
 		AA0000012FE6A00000000013 /* CrosshairTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000012FE6A00000000014 /* CrosshairTests.swift */; };
 		AA0000012FE6A00000000015 /* SplineOvershootDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000012FE6A00000000016 /* SplineOvershootDemo.swift */; };
 		AA0000012FE6A00000000017 /* GaussianDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000012FE6A00000000018 /* GaussianDemo.swift */; };
+		AA0000012FE6A00000000022 /* BarDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000012FE6A00000000021 /* BarDemo.swift */; };
+		AA0000012FE6A00000000024 /* ScatterDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000012FE6A00000000023 /* ScatterDemo.swift */; };
+		AA0000012FE6A00000000026 /* RangeDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000012FE6A00000000025 /* RangeDemo.swift */; };
 		FB85B8C02FE69A7900D2D391 /* BasicChartsDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB85B8AA2FE69A1200D2D391 /* BasicChartsDemo.swift */; };
 		FB85B8C12FE69A7900D2D391 /* DemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB85B8AB2FE69A1200D2D391 /* DemoApp.swift */; };
 		FB85B8C22FE69A7900D2D391 /* InterpolationDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB85B8AE2FE69A1200D2D391 /* InterpolationDemo.swift */; };
@@ -84,11 +91,18 @@
 /* Begin PBXFileReference section */
 		AA0000012FE6A00000000001 /* LineRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineRenderer.swift; sourceTree = "<group>"; };
 		AA0000012FE6A00000000002 /* CandlestickRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CandlestickRenderer.swift; sourceTree = "<group>"; };
+		AA0000012FE6A00000000019 /* BarRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarRenderer.swift; sourceTree = "<group>"; };
+		AA0000012FE6A0000000001B /* ErrorBarRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorBarRenderer.swift; sourceTree = "<group>"; };
+		AA0000012FE6A0000000001D /* BoxPlotRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoxPlotRenderer.swift; sourceTree = "<group>"; };
+		AA0000012FE6A0000000001F /* BubbleRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BubbleRenderer.swift; sourceTree = "<group>"; };
 		AA0000012FE6A00000000003 /* ProtocolsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtocolsTests.swift; sourceTree = "<group>"; };
 		AA0000012FE6A00000000004 /* LineRendererTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineRendererTests.swift; sourceTree = "<group>"; };
 		AA0000012FE6A00000000005 /* CandlestickRendererTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CandlestickRendererTests.swift; sourceTree = "<group>"; };
 		AA0000012FE6A0000000000C /* CandlestickDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CandlestickDemo.swift; sourceTree = "<group>"; };
 		AA0000012FE6A0000000000D /* CrosshairDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosshairDemo.swift; sourceTree = "<group>"; };
+		AA0000012FE6A00000000021 /* BarDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarDemo.swift; sourceTree = "<group>"; };
+		AA0000012FE6A00000000023 /* ScatterDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScatterDemo.swift; sourceTree = "<group>"; };
+		AA0000012FE6A00000000025 /* RangeDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RangeDemo.swift; sourceTree = "<group>"; };
 		AA0000012FE6A00000000010 /* CrosshairConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosshairConfig.swift; sourceTree = "<group>"; };
 		AA0000012FE6A00000000012 /* CrosshairOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosshairOverlay.swift; sourceTree = "<group>"; };
 		AA0000012FE6A00000000014 /* CrosshairTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosshairTests.swift; sourceTree = "<group>"; };
@@ -160,6 +174,9 @@
 				FB85B8AF2FE69A1200D2D391 /* OverlayDemo.swift */,
 				AA0000012FE6A00000000016 /* SplineOvershootDemo.swift */,
 				AA0000012FE6A00000000018 /* GaussianDemo.swift */,
+			AA0000012FE6A00000000021 /* BarDemo.swift */,
+			AA0000012FE6A00000000023 /* ScatterDemo.swift */,
+			AA0000012FE6A00000000025 /* RangeDemo.swift */,
 			);
 			path = DemoApp;
 			sourceTree = "<group>";
@@ -177,6 +194,10 @@
 			children = (
 				AA0000012FE6A00000000001 /* LineRenderer.swift */,
 				AA0000012FE6A00000000002 /* CandlestickRenderer.swift */,
+				AA0000012FE6A00000000019 /* BarRenderer.swift */,
+				AA0000012FE6A0000000001B /* ErrorBarRenderer.swift */,
+				AA0000012FE6A0000000001D /* BoxPlotRenderer.swift */,
+				AA0000012FE6A0000000001F /* BubbleRenderer.swift */,
 				AA0000012FE6A00000000010 /* CrosshairConfig.swift */,
 				AA0000012FE6A00000000012 /* CrosshairOverlay.swift */,
 				FBE3DEFF2FE6444F00960724 /* ChartGeometry.swift */,
@@ -337,6 +358,10 @@
 			files = (
 				AA0000012FE6A00000000006 /* LineRenderer.swift in Sources */,
 				AA0000012FE6A00000000007 /* CandlestickRenderer.swift in Sources */,
+				AA0000012FE6A0000000001A /* BarRenderer.swift in Sources */,
+				AA0000012FE6A0000000001C /* ErrorBarRenderer.swift in Sources */,
+				AA0000012FE6A0000000001E /* BoxPlotRenderer.swift in Sources */,
+				AA0000012FE6A00000000020 /* BubbleRenderer.swift in Sources */,
 				AA0000012FE6A0000000000F /* CrosshairConfig.swift in Sources */,
 				AA0000012FE6A00000000011 /* CrosshairOverlay.swift in Sources */,
 				FBE3DF0A2FE6444F00960724 /* ChartRendering.swift in Sources */,
@@ -378,6 +403,9 @@
 				FB85B8C52FE69A7900D2D391 /* DetailOverviewDemo.swift in Sources */,
 				AA0000012FE6A00000000015 /* SplineOvershootDemo.swift in Sources */,
 				AA0000012FE6A00000000017 /* GaussianDemo.swift in Sources */,
+				AA0000012FE6A00000000022 /* BarDemo.swift in Sources */,
+				AA0000012FE6A00000000024 /* ScatterDemo.swift in Sources */,
+				AA0000012FE6A00000000026 /* RangeDemo.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

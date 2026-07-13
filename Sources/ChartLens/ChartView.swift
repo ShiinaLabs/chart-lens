@@ -148,11 +148,46 @@ public struct Chart<Overlay: View>: View {
     }
 
     private func computeXMin() -> Double {
-        axis.xMin ?? series.flatMap { $0.points.map(\.x) }.min() ?? 0
+        if let xMin = axis.xMin { return xMin }
+        let xs = series.flatMap { $0.points.map(\.x) }
+        return axis.padXByHalfStep && xs.count >= 2 ? (xs.min() ?? 0) - halfXStep(xs: xs) : (xs.min() ?? 0)
     }
 
     private func computeXMax() -> Double {
-        axis.xMax ?? series.flatMap { $0.points.map(\.x) }.max() ?? 1
+        if let xMax = axis.xMax { return xMax }
+        let xs = series.flatMap { $0.points.map(\.x) }
+        return axis.padXByHalfStep && xs.count >= 2 ? (xs.max() ?? 1) + halfXStep(xs: xs) : (xs.max() ?? 1)
+    }
+
+    /// Half the smallest gap between sorted x values — used to pad auto x-bounds
+    /// so elements drawn centered on an x value aren't clipped at the edges.
+    private func halfXStep(xs: [Double]) -> Double {
+        let sorted = xs.sorted()
+        var minGap = Double.infinity
+        for i in 1..<sorted.count {
+            let g = sorted[i] - sorted[i - 1]
+            if g > 0 { minGap = min(minGap, g) }
+        }
+        if minGap.isFinite, minGap > 0 { return minGap / 2 }
+        let span = (sorted.last ?? 1) - (sorted.first ?? 0)
+        return max(1e-6, span / 2)
+    }
+
+    /// Builds x-axis ticks from each point's `xLabel` when `axis.xTicks` is empty.
+    /// Placing a tick at the point's own x keeps the label centered under the
+    /// element (bar, box, error bar), mirroring a categorical axis.
+    private func autoXTicks() -> [ChartAxisConfig.XTick] {
+        var seen = Set<Double>()
+        var ticks: [ChartAxisConfig.XTick] = []
+        for s in series {
+            for pt in s.points {
+                if let label = pt.xLabel, !seen.contains(pt.x) {
+                    seen.insert(pt.x)
+                    ticks.append(ChartAxisConfig.XTick(position: pt.x, label: label))
+                }
+            }
+        }
+        return ticks.sorted { $0.position < $1.position }
     }
 
     // MARK: - Canvas Content
@@ -187,8 +222,9 @@ public struct Chart<Overlay: View>: View {
         }
 
         // X-axis ticks + labels
+        let xTicks = axis.xTicks.isEmpty ? autoXTicks() : axis.xTicks
         var lastLabelX: CGFloat = -.greatestFiniteMagnitude
-        for tick in axis.xTicks where tick.position >= geo.xMin && tick.position <= geo.xMax {
+        for tick in xTicks where tick.position >= geo.xMin && tick.position <= geo.xMax {
             let x = rect.minX + (tick.position - geo.xMin) * geo.scaleX
             if axis.minXTickSpacing > 0, abs(x - lastLabelX) < axis.minXTickSpacing { continue }
             lastLabelX = x

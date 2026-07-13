@@ -5,6 +5,7 @@ A universal, data-driven chart rendering library for SwiftUI. Domain-agnostic �
 ## Features
 
 - **Generic overlay injection** — all business-specific rendering (tooltips, labels, heatmaps) is injected via a `ViewBuilder` closure
+- **Cartesian chart families** — line/area/dot/step, candlestick, bar, error bars, box plot, and bubble all share one coordinate system and the same hit-testing/interaction pipeline
 - **5 interpolation modes** — linear, Catmull-Rom, clamped cubic, step, gaussian
 - **Detail + Overview** — linked chart pair with draggable range selector for zoom/pan
 - **Hit testing** — X-axis nearest-point search across all series
@@ -101,7 +102,10 @@ DetailOverviewChart(
 | Type | Purpose |
 |------|---------|
 | `ChartPoint` | Single (x, y) data point in data-space coordinates |
-| `ChartSeries` | Array of points + rendering style + interpolation mode |
+| `RangePoint` | Center value + `[low, high]` interval (error bars) |
+| `BoxPlotPoint` | Quartiles, whiskers, and outliers (box plot) |
+| `BubblePoint` | Scatter point with per-point pixel `radius` (bubble) |
+| `ChartSeries` | Array of points + rendering style + `ChartSeriesRenderer` |
 | `ChartSeriesStyle` | Color, lineWidth, areaOpacity, pointRadius, strokeOpacity, baseline |
 | `ChartAxisConfig` | Axis bounds, grid step, tick labels/formatters, colors, fonts |
 | `ChartStyle` | Layout margins — controls `chartRect(size:)` and annotation bounds |
@@ -158,7 +162,7 @@ SwiftUI's `onChange(of:)` fires **after** `body` computation. When `DetailOvervi
 
 Open `ChartLens.xcodeproj` in Xcode and run the **DemoApp** scheme. The sidebar groups demos into sections:
 
-- **Chart Types** — basic charts (line, area, dot, step), candlestick, gaussian spectrum
+- **Chart Types** — basic charts (line, area, dot, step), candlestick, bar, range & box, scatter & bubble, gaussian spectrum
 - **Interpolation** — 5 interpolation modes, spline overshoot comparison
 - **Interaction** — hover & tap callbacks, crosshair overlay
 - **Composition** — detail + overview, custom overlays

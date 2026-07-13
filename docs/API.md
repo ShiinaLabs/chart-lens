@@ -9,10 +9,11 @@ public protocol ChartPointProtocol: Sendable {
     var x: Double { get }
     var yRange: (min: Double, max: Double) { get }
     var displayY: Double { get }  // default: yRange.min
+    var xLabel: String? { get }   // default: nil (categorical x-axis label)
 }
 ```
 
-All data points conform to this protocol. `yRange` defines the Y extent for auto-ranging; `displayY` is the representative Y used for hit-test screen positioning.
+All data points conform to this protocol. `yRange` defines the Y extent for auto-ranging; `displayY` is the representative Y used for hit-test screen positioning. `xLabel`, when set, is drawn on the x-axis at the point's `x` (an evenly-spaced categorical tick), so bars/boxes/error bars can carry text labels instead of numeric x values.
 
 ### ChartSeriesRenderer
 
@@ -47,11 +48,13 @@ The erased protocol used by `Chart<Overlay>` to store mixed series types as `[an
 public struct ChartPoint: ChartPointProtocol {
     public var x: Double
     public var y: Double
+    public var color: Color?   // nil → fall back to style.color; used by bar renderer
+    public var xLabel: String? // nil → no x-axis tick; set for a categorical label
     // yRange → (y, y), displayY → y
 }
 ```
 
-Standard 2D data point for line/area/dot charts.
+Standard 2D data point for line/area/dot charts. `color` lets individual bars override the series `style.color`.
 
 ### CandlestickPoint
 
@@ -64,6 +67,47 @@ public struct CandlestickPoint: ChartPointProtocol {
 ```
 
 OHLC data point for K-line / candlestick charts.
+
+### RangePoint
+
+```swift
+public struct RangePoint: ChartPointProtocol {
+    public let x: Double
+    public let center, low, high: Double
+    public let xLabel: String?  // nil → no x-axis tick
+    // yRange → (low, high), displayY → center
+}
+```
+
+Center value with a `[low, high]` interval, for error bars.
+
+### BoxPlotPoint
+
+```swift
+public struct BoxPlotPoint: ChartPointProtocol {
+    public let x: Double
+    public let min, q1, median, q3, max: Double
+    public let xLabel: String?  // nil → no x-axis tick
+    public var outliers: [Double] = []
+    // yRange → (min, max), displayY → median
+}
+```
+
+Quartiles, whiskers, and outliers for a full box plot.
+
+### BubblePoint
+
+```swift
+public struct BubblePoint: ChartPointProtocol {
+    public let x: Double
+    public let y: Double
+    public let radius: CGFloat   // pixel radius (zoom-independent)
+    public var value: Double = 0 // payload for tooltips
+    // yRange → (y, y), displayY → y
+}
+```
+
+Scatter point whose drawn radius encodes a third (size) dimension.
 
 ### ChartSeries\<Point\>
 
@@ -78,6 +122,20 @@ public struct ChartSeries<Point: ChartPointProtocol>: ChartSeriesProtocol {
 // Convenience init (uses LineRenderer)
 extension ChartSeries where Point == ChartPoint {
     public init(id: String, points: [ChartPoint], style: ChartSeriesStyle)
+}
+
+// Chart-type factories
+extension ChartSeries where Point == ChartPoint {
+    public static func bars(id: String, points: [ChartPoint], color: Color = .blue, opacity: Double = 1.0, lineWidth: CGFloat = 0) -> ChartSeries<ChartPoint>
+}
+extension ChartSeries where Point == RangePoint {
+    public static func errorBars(id: String, points: [RangePoint], style: ChartSeriesStyle = .line(color: .primary)) -> ChartSeries<RangePoint>
+}
+extension ChartSeries where Point == BoxPlotPoint {
+    public static func boxPlot(id: String, points: [BoxPlotPoint], style: ChartSeriesStyle = .bars(color: .blue, opacity: 0.15, lineWidth: 1)) -> ChartSeries<BoxPlotPoint>
+}
+extension ChartSeries where Point == BubblePoint {
+    public static func bubbles(id: String, points: [BubblePoint], style: ChartSeriesStyle = .bars(color: .blue, opacity: 0.6)) -> ChartSeries<BubblePoint>
 }
 ```
 
@@ -112,6 +170,21 @@ public enum Interpolation: Equatable, Sendable {
 }
 ```
 
+## Renderers
+
+Each chart type is a `ChartSeriesRenderer<Point>` that draws into a `GraphicsContext` using `geometry.dataToPoint(x:y:)`.
+
+```swift
+public struct LineRenderer: ChartSeriesRenderer<ChartPoint>        // line / area / dot / step / gaussian
+public struct CandlestickRenderer: ChartSeriesRenderer<CandlestickPoint>
+public struct BarRenderer: ChartSeriesRenderer<ChartPoint>        // vertical bars, baseline-aware; per-point color overrides series color
+public struct ErrorBarRenderer: ChartSeriesRenderer<RangePoint>   // center ± low/high with caps
+public struct BoxPlotRenderer: ChartSeriesRenderer<BoxPlotPoint>  // quartiles + whiskers + outliers
+public struct BubbleRenderer: ChartSeriesRenderer<BubblePoint>    // per-point radius
+```
+
+`BarRenderer` resolves the baseline from `style.baseline`, defaulting to `0` when visible (otherwise the nearest axis bound). `BubbleRenderer` draws each point at its pixel `radius` (zoom-independent, like `pointRadius`).
+
 ## Layout Types
 
 ### ChartStyle
@@ -139,9 +212,10 @@ public struct ChartAxisConfig {
     public var yMin, yMax: Double?           // nil = auto
     public var xMin, xMax: Double?           // nil = auto
     public var yStep: Double                 // 10
-    public var xTicks: [XTick]               // []
+    public var xTicks: [XTick]               // []  (when empty, ticks are auto-built from each point's xLabel)
     public var showYGrid: Bool               // true
     public var clipToRect: Bool              // true
+    public var padXByHalfStep: Bool          // false (pad auto x-bounds by half the min x-gap)
     public var yTickLabel: (Double) -> String  // "\(Int($0))"
     // ...
 }
