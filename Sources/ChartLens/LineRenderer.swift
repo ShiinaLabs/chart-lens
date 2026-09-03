@@ -72,17 +72,18 @@ public struct LineRenderer: ChartSeriesRenderer<ChartPoint> {
 
     private func drawGaussianCurve(context: inout GraphicsContext, points: [ChartPoint], style: ChartSeriesStyle, geometry: ChartGeometry, sigma: Double, baseline: Double) {
         guard let first = points.first, let last = points.last else { return }
-        let center = (first.x + last.x) / 2.0
-        let amplitude = max(0, first.y - baseline)
-        let steps = 80
+        let envelope = GaussianEnvelope(
+            leftX: first.x,
+            rightX: last.x,
+            peakY: first.y,
+            baselineY: baseline,
+            sigma: sigma
+        )
 
         // Build curve points
         var curvePts: [CGPoint] = []
-        for i in 0...steps {
-            let x = first.x + (last.x - first.x) * Double(i) / Double(steps)
-            let g = exp(-((x - center) * (x - center)) / (2 * sigma * sigma))
-            let y = baseline + amplitude * g
-            curvePts.append(geometry.dataToPoint(x: x, y: y))
+        for point in envelope.sampledPoints(count: 81) {
+            curvePts.append(geometry.dataToPoint(x: point.x, y: point.y))
         }
 
         let leftBase = geometry.dataToPoint(x: first.x, y: baseline)
