@@ -109,6 +109,119 @@ public struct BubblePoint: ChartPointProtocol {
 
 Scatter point whose drawn radius encodes a third (size) dimension.
 
+## Sector Charts
+
+Sector charts are a separate polar API for part-to-whole data. They do not use
+`ChartPointProtocol`, Cartesian axes, or `ChartInteraction`.
+
+### SectorDatum
+
+```swift
+public struct SectorDatum: Identifiable, Sendable {
+    public let id: String
+    public let value: Double
+    public let label: String?
+
+    public init(id: String, value: Double, label: String? = nil)
+}
+```
+
+Negative and non-finite values are ignored by `SectorLayout`. Zero values are
+retained with a zero fraction and zero angular span.
+
+### SectorSlice and SectorLayout
+
+```swift
+public struct SectorSlice: Identifiable, Sendable {
+    public let id: String
+    public let index: Int
+    public let value: Double
+    public let fraction: Double
+    public let startAngle: Angle
+    public let endAngle: Angle
+    public let label: String?
+}
+
+public enum SectorLayout {
+    public static func slices(
+        from data: [SectorDatum],
+        startAngle: Angle = .degrees(-90),
+        clockwise: Bool = true
+    ) -> [SectorSlice]
+}
+```
+
+The layout preserves input order and identity. It normalizes valid values into
+fractions whose total is 1 when the total is positive; it does not sort or
+aggregate input data.
+
+### SectorStyle
+
+```swift
+public struct SectorStyle: Sendable {
+    public var innerRadiusRatio: CGFloat      // 0 for pie, 0.6 for donut
+    public var outerRadiusInset: CGFloat      // 4
+    public var angularGap: Angle              // 1 degree
+    public var startAngle: Angle              // -90 degrees
+    public var clockwise: Bool                // true
+    public var colors: [Color]
+
+    public static func pie(...)
+    public static func donut(...)
+}
+```
+
+Colors are selected by the original input index and cycle when there are more
+slices than colors. An empty color list falls back to blue.
+
+### SectorGeometry
+
+```swift
+public struct SectorGeometry: Sendable {
+    public let frameRect: CGRect
+    public let plotRect: CGRect
+    public let center: CGPoint
+    public let innerRadius: CGFloat
+    public let outerRadius: CGFloat
+    public let slices: [SectorSlice]
+
+    public func centroid(of slice: SectorSlice) -> CGPoint
+    public func slice(at point: CGPoint) -> SectorSlice?
+}
+```
+
+`slice(at:)` performs true polar hit testing: it checks the annulus, accounts
+for direction and angle wrapping, and treats angular gaps and a donut hole as
+non-hit regions.
+
+### SectorChart and SectorInteraction
+
+```swift
+public struct SectorChart<Overlay: View>: View {
+    public init(
+        data: [SectorDatum],
+        style: SectorStyle = .pie(),
+        interaction: SectorInteraction = .init()
+    ) where Overlay == EmptyView
+
+    public init(
+        data: [SectorDatum],
+        style: SectorStyle = .pie(),
+        interaction: SectorInteraction = .init(),
+        @ViewBuilder overlay: @escaping (SectorGeometry, [SectorSlice]) -> Overlay
+    )
+}
+
+public struct SectorInteraction: @unchecked Sendable {
+    public var onHover: (@MainActor (SectorSlice?) -> Void)?
+    public var onTap: (@MainActor (SectorSlice?) -> Void)?
+}
+```
+
+The chart provides an accessibility summary such as “Chart with 3 sectors.
+Success 62%, Pending 23%, Failed 15%.” Empty or all-zero input is announced as
+“Empty chart”.
+
 ### ChartSeries\<Point\>
 
 ```swift

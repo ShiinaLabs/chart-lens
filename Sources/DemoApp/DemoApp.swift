@@ -58,6 +58,7 @@ enum DemoPage: String, CaseIterable {
     case rangeBox = "Range & Box"
     case scatterBubble = "Scatter & Bubble"
     case gaussian = "Gaussian Spectrum"
+    case sector = "Pie & Donut"
 
     // Interpolation
     case interpolation = "Interpolation Modes"
@@ -81,6 +82,7 @@ enum DemoPage: String, CaseIterable {
         case .rangeBox: "chart.bar.doc.horizontal"
         case .scatterBubble: "circle.grid.cross.fill"
         case .gaussian: "waveform.path.ecg"
+        case .sector: "chart.pie.fill"
         case .interpolation: "waveform.path"
         case .splineOvershoot: "arrow.triangle.branch"
         case .interactions: "cursorarrow.click.2"
@@ -92,7 +94,7 @@ enum DemoPage: String, CaseIterable {
 
     // MARK: - Groups
 
-    static let chartTypePages: [DemoPage] = [.basicCharts, .candlestick, .bar, .rangeBox, .scatterBubble, .gaussian]
+    static let chartTypePages: [DemoPage] = [.basicCharts, .candlestick, .bar, .rangeBox, .scatterBubble, .gaussian, .sector]
     static let interpolationPages: [DemoPage] = [.interpolation, .splineOvershoot]
     static let interactionPages: [DemoPage] = [.interactions, .crosshair]
     static let compositionPages: [DemoPage] = [.detailOverview, .overlays]
@@ -105,6 +107,7 @@ enum DemoPage: String, CaseIterable {
         case .rangeBox: RangeDemo()
         case .scatterBubble: ScatterDemo()
         case .gaussian: GaussianDemo()
+        case .sector: SectorDemo()
         case .interpolation: InterpolationDemo()
         case .splineOvershoot: SplineOvershootDemo()
         case .interactions: InteractionsDemo()

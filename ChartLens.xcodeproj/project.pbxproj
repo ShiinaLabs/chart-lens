@@ -45,6 +45,13 @@
 		FBE3DF122FE6444F00960724 /* SplineInterpolation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE3DF072FE6444F00960724 /* SplineInterpolation.swift */; };
 		FBE3DF172FE6447100960724 /* ChartViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE3DF142FE6447100960724 /* ChartViewTests.swift */; };
 		FBE3DF182FE6447100960724 /* ChartUtilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE3DF132FE6447100960724 /* ChartUtilityTests.swift */; };
+		C10000012FE7000000000001 /* SectorTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10000012FE7000000000011 /* SectorTypes.swift */; };
+		C10000012FE7000000000002 /* SectorLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10000012FE7000000000012 /* SectorLayout.swift */; };
+		C10000012FE7000000000003 /* SectorGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10000012FE7000000000013 /* SectorGeometry.swift */; };
+		C10000012FE7000000000004 /* SectorRendering.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10000012FE7000000000014 /* SectorRendering.swift */; };
+		C10000012FE7000000000005 /* SectorChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10000012FE7000000000015 /* SectorChart.swift */; };
+		C10000012FE7000000000006 /* SectorDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10000012FE7000000000016 /* SectorDemo.swift */; };
+		C10000012FE7000000000007 /* GaussianEnvelope.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10000012FE7000000000017 /* GaussianEnvelope.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -129,6 +136,13 @@
 		FBE3DF072FE6444F00960724 /* SplineInterpolation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplineInterpolation.swift; sourceTree = "<group>"; };
 		FBE3DF132FE6447100960724 /* ChartUtilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartUtilityTests.swift; sourceTree = "<group>"; };
 		FBE3DF142FE6447100960724 /* ChartViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartViewTests.swift; sourceTree = "<group>"; };
+		C10000012FE7000000000011 /* SectorTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectorTypes.swift; sourceTree = "<group>"; };
+		C10000012FE7000000000012 /* SectorLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectorLayout.swift; sourceTree = "<group>"; };
+		C10000012FE7000000000013 /* SectorGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectorGeometry.swift; sourceTree = "<group>"; };
+		C10000012FE7000000000014 /* SectorRendering.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectorRendering.swift; sourceTree = "<group>"; };
+		C10000012FE7000000000015 /* SectorChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectorChart.swift; sourceTree = "<group>"; };
+		C10000012FE7000000000016 /* SectorDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectorDemo.swift; sourceTree = "<group>"; };
+		C10000012FE7000000000017 /* GaussianEnvelope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GaussianEnvelope.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -177,6 +191,7 @@
 			AA0000012FE6A00000000021 /* BarDemo.swift */,
 			AA0000012FE6A00000000023 /* ScatterDemo.swift */,
 			AA0000012FE6A00000000025 /* RangeDemo.swift */,
+				C10000012FE7000000000016 /* SectorDemo.swift */,
 			);
 			path = DemoApp;
 			sourceTree = "<group>";
@@ -209,6 +224,12 @@
 				FBE3DF052FE6444F00960724 /* GlassBackground.swift */,
 				FBE3DF062FE6444F00960724 /* RangeSelectorView.swift */,
 				FBE3DF072FE6444F00960724 /* SplineInterpolation.swift */,
+				C10000012FE7000000000011 /* SectorTypes.swift */,
+				C10000012FE7000000000012 /* SectorLayout.swift */,
+				C10000012FE7000000000013 /* SectorGeometry.swift */,
+				C10000012FE7000000000014 /* SectorRendering.swift */,
+				C10000012FE7000000000015 /* SectorChart.swift */,
+				C10000012FE7000000000017 /* GaussianEnvelope.swift */,
 			);
 			path = ChartLens;
 			sourceTree = "<group>";
@@ -373,6 +394,12 @@
 				FBE3DF102FE6444F00960724 /* ChartTypes.swift in Sources */,
 				FBE3DF112FE6444F00960724 /* DetailOverviewChart.swift in Sources */,
 				FBE3DF122FE6444F00960724 /* SplineInterpolation.swift in Sources */,
+				C10000012FE7000000000001 /* SectorTypes.swift in Sources */,
+				C10000012FE7000000000002 /* SectorLayout.swift in Sources */,
+				C10000012FE7000000000003 /* SectorGeometry.swift in Sources */,
+				C10000012FE7000000000004 /* SectorRendering.swift in Sources */,
+				C10000012FE7000000000005 /* SectorChart.swift in Sources */,
+				C10000012FE7000000000007 /* GaussianEnvelope.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -406,6 +433,7 @@
 				AA0000012FE6A00000000022 /* BarDemo.swift in Sources */,
 				AA0000012FE6A00000000024 /* ScatterDemo.swift in Sources */,
 				AA0000012FE6A00000000026 /* RangeDemo.swift in Sources */,
+				C10000012FE7000000000006 /* SectorDemo.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

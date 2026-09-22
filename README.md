@@ -6,6 +6,7 @@ A universal, data-driven chart rendering library for SwiftUI. Domain-agnostic �
 
 - **Generic overlay injection** — all business-specific rendering (tooltips, labels, heatmaps) is injected via a `ViewBuilder` closure
 - **Cartesian chart families** — line/area/dot/step, candlestick, bar, error bars, box plot, and bubble all share one coordinate system and the same hit-testing/interaction pipeline
+- **Sector charts** — native pie and donut charts for part-to-whole data, with polar geometry, gaps, overlays, and hover/tap interaction
 - **5 interpolation modes** — linear, Catmull-Rom, clamped cubic, step, gaussian
 - **Detail + Overview** — linked chart pair with draggable range selector for zoom/pan
 - **Hit testing** — X-axis nearest-point search across all series
@@ -86,6 +87,20 @@ Chart(series: series, axis: axisConfig, style: chartStyle) { geo, series in
 }
 ```
 
+### Pie or donut chart
+
+```swift
+let distribution = [
+    SectorDatum(id: "success", value: 62, label: "Success"),
+    SectorDatum(id: "pending", value: 23, label: "Pending"),
+    SectorDatum(id: "failed", value: 15, label: "Failed"),
+]
+
+SectorChart(data: distribution, style: .donut())
+```
+
+`SectorChart` also accepts a `SectorInteraction` for polar hover/tap callbacks and an overlay closure receiving `SectorGeometry` plus the resolved `[SectorSlice]`.
+
 ### Detail + Overview with zoom
 
 ```swift
@@ -113,6 +128,11 @@ DetailOverviewChart(
 | `ChartGeometry` | Maps data-space ↔ pixel-space via `dataToPoint`/`pointToData` |
 | `DetailOverviewChart` | Linked detail + overview chart pair with `RangeSelector` |
 | `RangeSelector` | Horizontal overview strip with draggable/resizable window |
+| `SectorDatum` / `SectorSlice` | Input and resolved slices for pie/donut charts |
+| `SectorStyle` | Pie/donut radii, angular gaps, direction, and colors |
+| `SectorGeometry` | Polar chart geometry, centroids, and slice hit testing |
+| `SectorChart` | Native pie/donut chart view with optional overlays |
+| `SectorInteraction` | Polar hover and tap callbacks |
 
 ## Interpolation Modes
 
@@ -140,6 +160,7 @@ Overlays should use `annotationRect` for persistent labels — do not infer labe
 ## Design Decisions
 
 - **No tap consumption** — `Chart` does not add `.onTapGesture`, allowing parent views to handle tap-to-select
+- **Separate polar family** — `SectorChart` intentionally does not conform pie/donut data to the Cartesian `ChartPointProtocol`; its layout and hit testing are angular and radial
 - **Scale denominators** clamped to `max(1e-6, ...)` to prevent division by zero
 - **Y-grid** uses index-based iteration instead of `Int(step)` stride to avoid truncation
 - **Annotation rect** clamped to `max(0, ...)` for safety in narrow containers

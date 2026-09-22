@@ -2,7 +2,7 @@
 
 ## Overview
 
-ChartLens is a Swift Chart library for macOS 14+ / iOS 17+, built with Swift 6.0 and SwiftUI Canvas rendering. It supports mixed chart types (line, area, candlestick), spline interpolation, crosshair overlay, and zoom/pan interactions.
+ChartLens is a Swift chart library for macOS 14+ / iOS 17+, built with Swift 6.0 and SwiftUI Canvas rendering. It supports Cartesian chart types (line, area, candlestick), spline interpolation, crosshair overlay, zoom/pan interactions, and a separate polar sector family for pie and donut charts.
 
 ```
 Package:          ChartLens
@@ -26,6 +26,14 @@ User Data → ChartPoint / CandlestickPoint
               ↓  overlay builder → CrosshairOverlay or custom View
               ↓
          onContinuousHover / onTapGesture → ChartInteraction callbacks
+
+Part-to-whole Data → SectorDatum
+                         ↓
+                   SectorLayout.slices
+                         ↓
+                   SectorChart → SectorGeometry
+                         ↓
+                   Canvas annular paths + SectorInteraction callbacks
 ```
 
 ## Layer Map
@@ -59,6 +67,15 @@ User Data → ChartPoint / CandlestickPoint
 │  ├─ LineRenderer (line/area/dot/gaussian)   │
 │  └─ CandlestickRenderer (OHLC bodies+wicks) │
 └─────────────────────────────────────────────┘
+                 Polar family
+┌─────────────────────────────────────────────┐
+│ SectorChart                                 │
+│ Layout, Canvas rendering, polar hit testing │
+├─────────────────────────────────────────────┤
+│ SectorDatum / SectorSlice / SectorStyle     │
+│ SectorLayout / SectorGeometry               │
+│ SectorInteraction                           │
+└─────────────────────────────────────────────┘
 ```
 
 ## File Map
@@ -78,6 +95,11 @@ User Data → ChartPoint / CandlestickPoint
 | `DetailOverviewChart.swift` | Overview+detail linked chart pair |
 | `RangeSelectorView.swift` | Drag-to-select X range with handles |
 | `GlassBackground.swift` | VisualEffectView wrapper for glass-morphism backgrounds |
+| `SectorTypes.swift` | SectorDatum, SectorSlice, SectorStyle, and SectorInteraction |
+| `SectorLayout.swift` | Stable ordered normalization into angular slices |
+| `SectorGeometry.swift` | Polar frame/plot geometry, centroids, and hit testing |
+| `SectorRendering.swift` | Pie and donut annular path construction and Canvas filling |
+| `SectorChart.swift` | Public polar chart view, overlays, accessibility, and gestures |
 
 ## Key Patterns
 
@@ -111,3 +133,11 @@ All types and protocols in the public API conform to `Sendable` for Swift 6 stri
 4. Pass to `Chart(series: [any ChartSeriesProtocol])`
 
 Candlestick is the reference example.
+
+### Sector charts
+
+Pie and donut charts form a separate first-class family. `SectorLayout` resolves
+`SectorDatum` into ordered `SectorSlice` values, while `SectorGeometry` owns only
+polar measurements and hit testing. `SectorChart` renders the slices as real
+filled paths and keeps hover/tap callbacks in `SectorInteraction`. This avoids
+forcing part-to-whole data into the Cartesian x/y protocol.

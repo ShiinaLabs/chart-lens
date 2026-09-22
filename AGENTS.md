@@ -33,6 +33,7 @@ xed ChartLens/ChartLens.xcodeproj
 - Protocol-driven architecture: `ChartPointProtocol` → `ChartSeriesRenderer<Point>` → `ChartSeries<Point>: ChartSeriesProtocol`
 - `Chart<Overlay>` stores `[any ChartSeriesProtocol]` for mixed chart types
 - Overlays (crosshairs, tooltips, etc.) are injected via `@ViewBuilder overlay: (ChartGeometry, [any ChartSeriesProtocol]) -> Overlay`
+- `SectorChart` is a separate polar family using `SectorDatum`, `SectorLayout`, `SectorGeometry`, and `SectorInteraction`; do not force sector data into the Cartesian point/series protocols
 - All public types conform to `Sendable` for Swift 6 strict concurrency
 - `ChartInteraction` callbacks are `@MainActor`-bound
 
